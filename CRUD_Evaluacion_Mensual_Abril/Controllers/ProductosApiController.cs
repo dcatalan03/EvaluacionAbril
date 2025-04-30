@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 public class ProductosApiController : Controller
 {
@@ -25,13 +26,21 @@ public class ProductosApiController : Controller
 
         if (usrNombre == null)
         {
-            return RedirectToAction("Login", "Login"); // Redirige a la página de login si no está autenticado
+            return RedirectToAction("Login", "Login");
         }
 
-        var productos = await _httpClient.GetFromJsonAsync<List<ProductoApi>>(apiUrl);
-
-        _bitacora.RegistrarEvento(HttpContext, usrNombre, "Consulto productos desde APIREST");
-        return View(productos);
+        try
+        {
+            var productos = await _httpClient.GetFromJsonAsync<List<ProductoApi>>(apiUrl);
+            _bitacora.RegistrarEvento(HttpContext, usrNombre, "Consultó productos desde APIREST");
+            return View(productos);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Error al cargar los productos desde la API.";
+            _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al consultar productos: {ex.Message}");
+            return View(new List<ProductoApi>());
+        }
     }
 
     // Acción para editar un producto
@@ -41,17 +50,26 @@ public class ProductosApiController : Controller
 
         if (usrNombre == null)
         {
-            return RedirectToAction("Login", "Login"); // Redirige a la página de login si no está autenticado
+            return RedirectToAction("Login", "Login");
         }
 
-        var producto = await _httpClient.GetFromJsonAsync<ProductoApi>($"{apiUrl}/{id}");
-        if (producto == null)
+        try
         {
-            TempData["Error"] = "Producto no encontrado.";
+            var producto = await _httpClient.GetFromJsonAsync<ProductoApi>($"{apiUrl}/{id}");
+            if (producto == null)
+            {
+                TempData["Error"] = "Producto no encontrado.";
+                return RedirectToAction("Index");
+            }
+
+            return View(producto);
+        }
+        catch (Exception ex)
+        {
+            TempData["Error"] = "Error al obtener el producto para editar.";
+            _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al obtener producto ID {id} para editar: {ex.Message}");
             return RedirectToAction("Index");
         }
-
-        return View(producto);
     }
 
     // Acción para actualizar un producto
@@ -62,7 +80,7 @@ public class ProductosApiController : Controller
 
         if (usrNombre == null)
         {
-            return RedirectToAction("Login", "Login"); // Redirige a la página de login si no está autenticado
+            return RedirectToAction("Login", "Login");
         }
 
         if (!ModelState.IsValid)
@@ -83,19 +101,21 @@ public class ProductosApiController : Controller
 
             if (response.IsSuccessStatusCode)
             {
-                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Edito el producto ID {producto.id}: {producto.title}");
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Editó el producto ID {producto.id}: {producto.title}");
                 TempData["Success"] = "Producto editado correctamente.";
                 return RedirectToAction("Index");
             }
             else
             {
                 TempData["Error"] = "Error al editar el producto.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Falló al editar el producto ID {producto.id}: Respuesta no exitosa.");
                 return View(producto);
             }
         }
-        catch
+        catch (Exception ex)
         {
             TempData["Error"] = "Error inesperado al editar.";
+            _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al editar el producto ID {producto.id}: {ex.Message}");
             return View(producto);
         }
     }
@@ -108,19 +128,28 @@ public class ProductosApiController : Controller
 
         if (usrNombre == null)
         {
-            return RedirectToAction("Login", "Login"); // Redirige a la página de login si no está autenticado
+            return RedirectToAction("Login", "Login");
         }
 
-        var response = await _httpClient.DeleteAsync($"{apiUrl}/{id}");
+        try
+        {
+            var response = await _httpClient.DeleteAsync($"{apiUrl}/{id}");
 
-        if (response.IsSuccessStatusCode)
-        {
-            _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Elimino el producto con ID {id}");
-            TempData["Success"] = "Producto eliminado correctamente.";
+            if (response.IsSuccessStatusCode)
+            {
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Eliminó el producto con ID {id}");
+                TempData["Success"] = "Producto eliminado correctamente.";
+            }
+            else
+            {
+                TempData["Error"] = "Error al eliminar el producto.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Falló al eliminar el producto ID {id}: Respuesta no exitosa.");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            TempData["Error"] = "Error al eliminar el producto.";
+            TempData["Error"] = "Error inesperado al eliminar.";
+            _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al eliminar el producto ID {id}: {ex.Message}");
         }
 
         return RedirectToAction("Index");

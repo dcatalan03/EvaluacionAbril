@@ -33,14 +33,19 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
             var usrNombre = HttpContext.Session.GetString("UsrNombre");
 
             if (usrNombre == null)
-            {
-                return RedirectToAction("Login", "Login"); // Redirige a la página de login si no está autenticado
-            }
+                return RedirectToAction("Login", "Login");
 
-            // Verificar que los valores sean válidos
             if (!num1.HasValue || !num2.HasValue)
             {
                 TempData["Error"] = "Debe ingresar ambos números.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, "Falló la suma: uno o ambos números están vacíos.");
+                return View();
+            }
+
+            if (num1.Value.ToString().Length > 15 || num2.Value.ToString().Length > 15)
+            {
+                TempData["Error"] = "Los números no pueden tener más de 15 dígitos.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Falló la suma: número demasiado largo ({num1}, {num2}).");
                 return View();
             }
 
@@ -51,12 +56,13 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
                 await client.CloseAsync();
 
                 ViewBag.Resultado = result;
-                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Realizó una suma: {num1} + {num2} = {result}  desde servicio ApiSOAP");
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Realizó una suma: {num1} + {num2} = {result} desde servicio ApiSOAP");
                 return View();
             }
             catch (Exception ex)
             {
-                TempData["Error"] = $"Error al consumir el servicio: {ex.Message} ";
+                TempData["Error"] = $"Error al consumir el servicio: {ex.Message}";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al consumir servicio en suma: {ex.Message}");
                 return View();
             }
         }
@@ -67,14 +73,19 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
             var usrNombre = HttpContext.Session.GetString("UsrNombre");
 
             if (usrNombre == null)
-            {
-                return RedirectToAction("Login", "Login"); // Redirige a la página de login si no está autenticado
-            }
+                return RedirectToAction("Login", "Login");
 
-            // Verificar que los valores sean válidos
             if (!num1.HasValue || !num2.HasValue)
             {
                 TempData["Error"] = "Debe ingresar ambos números.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, "Falló la resta: uno o ambos números están vacíos.");
+                return View();
+            }
+
+            if (num1.Value.ToString().Length > 15 || num2.Value.ToString().Length > 15)
+            {
+                TempData["Error"] = "Los números no pueden tener más de 15 dígitos.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Falló la resta: número demasiado largo ({num1}, {num2}).");
                 return View();
             }
 
@@ -91,6 +102,7 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = $"Error al consumir el servicio: {ex.Message}";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al consumir servicio en resta: {ex.Message}");
                 return View();
             }
         }
@@ -101,14 +113,19 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
             var usrNombre = HttpContext.Session.GetString("UsrNombre");
 
             if (usrNombre == null)
-            {
-                return RedirectToAction("Login", "Login"); // Redirige a la página de login si no está autenticado
-            }
+                return RedirectToAction("Login", "Login");
 
-            // Verificar que los valores sean válidos
             if (!num1.HasValue || !num2.HasValue)
             {
                 TempData["Error"] = "Debe ingresar ambos números.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, "Falló la multiplicación: uno o ambos números están vacíos.");
+                return View();
+            }
+
+            if (num1.Value.ToString().Length > 15 || num2.Value.ToString().Length > 15)
+            {
+                TempData["Error"] = "Los números no pueden tener más de 15 dígitos.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Falló la multiplicación: número demasiado largo ({num1}, {num2}).");
                 return View();
             }
 
@@ -125,6 +142,7 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
             catch (Exception ex)
             {
                 TempData["Error"] = $"Error al consumir el servicio: {ex.Message}";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al consumir servicio en multiplicación: {ex.Message}");
                 return View();
             }
         }
@@ -135,21 +153,26 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
             var usrNombre = HttpContext.Session.GetString("UsrNombre");
 
             if (usrNombre == null)
-            {
-                return RedirectToAction("Login", "Login"); // Redirige a la página de login si no está autenticado
-            }
+                return RedirectToAction("Login", "Login");
 
-            // Verificar que los valores sean válidos
             if (!num1.HasValue || !num2.HasValue)
             {
                 TempData["Error"] = "Debe ingresar ambos números.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, "Falló la división: uno o ambos números están vacíos.");
+                return View();
+            }
+
+            if (num1.Value.ToString().Length > 15 || num2.Value.ToString().Length > 15)
+            {
+                TempData["Error"] = "Los números no pueden tener más de 15 dígitos.";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Falló la división: número demasiado largo ({num1}, {num2}).");
                 return View();
             }
 
             if (num2 == 0)
             {
                 TempData["Error"] = "No se puede dividir entre cero.";
-                _bitacora.RegistrarEvento(HttpContext, usrNombre, "Intentó dividir entre cero");
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Intentó dividir entre cero: {num1} / {num2}");
                 return View();
             }
 
@@ -160,12 +183,13 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
                 await client.CloseAsync();
 
                 ViewBag.Resultado = result;
-                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Realizó una división: {num1} / {num2} = {result}  desde servicio ApiSOAP");
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Realizó una división: {num1} / {num2} = {result} desde servicio ApiSOAP");
                 return View();
             }
             catch (Exception ex)
             {
                 TempData["Error"] = $"Error al consumir el servicio: {ex.Message}";
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al consumir servicio en división: {ex.Message}");
                 return View();
             }
         }
