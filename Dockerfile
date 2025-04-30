@@ -1,15 +1,18 @@
-# Etapa de build con .NET 8 SDK
+# Etapa de build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+
 WORKDIR /src
 
-COPY . .  # Copia TODO lo del repo
+# Copiar todo el contenido del repositorio al contenedor
+COPY . .
 
+# Verificar archivos antes de hacer restore
+RUN ls -la /src/CRUD_Evaluacion_Mensual_Abril
 
-
-# Restaurar paquetes desde la ruta real
+# Restaurar dependencias desde el path real del .csproj
 RUN dotnet restore "./CRUD_Evaluacion_Mensual_Abril/CRUD_Evaluacion_Mensual_Abril.csproj"
 
-# Publicar en modo release
+# Publicar el proyecto
 RUN dotnet publish "./CRUD_Evaluacion_Mensual_Abril/CRUD_Evaluacion_Mensual_Abril.csproj" -c Release -o /app/publish
 
 # Etapa de runtime
