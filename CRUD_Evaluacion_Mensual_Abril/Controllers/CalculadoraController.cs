@@ -139,13 +139,22 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
                 _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Realizó una multiplicación: {num1} * {num2} = {result} desde servicio ApiSOAP");
                 return View();
             }
-            catch (Exception ex)
+               catch (Exception ex)
             {
-                TempData["Error"] = $"Error al consumir el servicio: {ex.Message}";
-                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al consumir servicio en multiplicación: {ex.Message}");
+                string mensajeUsuario = "Hubo un error al realizar la multiplicación. Asegúrese de que los números no sean demasiado grandes.";
+                TempData["Error"] = mensajeUsuario;
+
+               
+                string detalleTecnico = ex.InnerException != null
+                    ? $"{ex.Message} - Inner: {ex.InnerException.Message}"
+                    : ex.Message;
+
+                _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Error al multiplicar {num1} * {num2} - {detalleTecnico}");
+
                 return View();
             }
         }
+        
 
         [HttpGet]
         public async Task<IActionResult> Dividir(int? num1, int? num2)
