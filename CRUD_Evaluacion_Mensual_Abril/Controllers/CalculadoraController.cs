@@ -34,6 +34,10 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
 
             if (usrNombre == null)
                 return RedirectToAction("Login", "Login");
+            if (!num1.HasValue && !num2.HasValue)
+            {
+                return View();
+            }
 
             if (!num1.HasValue || !num2.HasValue)
             {
@@ -41,6 +45,7 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
                 _bitacora.RegistrarEvento(HttpContext, usrNombre, "Falló la suma: uno o ambos números están vacíos.");
                 return View();
             }
+          
 
             if (num1.Value.ToString().Length > 15 || num2.Value.ToString().Length > 15)
             {
@@ -74,6 +79,10 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
 
             if (usrNombre == null)
                 return RedirectToAction("Login", "Login");
+            if (!num1.HasValue && !num2.HasValue)
+            {
+                return View();
+            }
 
             if (!num1.HasValue || !num2.HasValue)
             {
@@ -114,6 +123,10 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
 
             if (usrNombre == null)
                 return RedirectToAction("Login", "Login");
+            if (!num1.HasValue && !num2.HasValue)
+            {
+                return View();
+            }
 
             if (!num1.HasValue || !num2.HasValue)
             {
@@ -163,6 +176,10 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
 
             if (usrNombre == null)
                 return RedirectToAction("Login", "Login");
+            if (!num1.HasValue && !num2.HasValue)
+            {
+                return View();
+            }
 
             if (!num1.HasValue || !num2.HasValue)
             {
