@@ -135,9 +135,9 @@ namespace CRUD_Evaluacion_Mensual_Abril.Controllers
                 return View();
             }
 
-            if (num1.Value.ToString().Length > 15 || num2.Value.ToString().Length > 15)
+            if (num1.Value.ToString().Length > 4 || num2.Value.ToString().Length > 4)
             {
-                TempData["Error"] = "Los números no pueden tener más de 15 dígitos.";
+                TempData["Error"] = "Los números no pueden tener más de 4 dígitos.";
                 _bitacora.RegistrarEvento(HttpContext, usrNombre, $"Falló la multiplicación: número demasiado largo ({num1}, {num2}).");
                 return View();
             }
