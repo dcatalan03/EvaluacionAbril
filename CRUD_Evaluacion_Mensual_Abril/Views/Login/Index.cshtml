@@ -1,0 +1,51 @@
+﻿@model UsuarioModel
+
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="container mt-5 animate__animated animate__fadeIn">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow rounded-4 border-0">
+                <div class="card-body p-4">
+                    <h2 class="text-center mb-4 y fw-semibold" style="color: #9b59b6;">
+                        <i class="bi bi-box-arrow-in-right me-2"></i> Iniciar Sesión
+                    </h2>
+
+                    <form method="post" asp-controller="Login" asp-action="Login">
+                        <div class="mb-3">
+                            <label for="usrNombre" class="form-label fw-semibold">
+                                <i class="bi bi-person-circle me-1"></i> Usuario
+                            </label>
+                            <input type="text" id="usrNombre" name="usrNombre" class="form-control rounded-3" required />
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="password" class="form-label fw-semibold">
+                                <i class="bi bi-lock-fill me-1"></i> Contraseña
+                            </label>
+                            <input type="password" id="password" name="password" class="form-control rounded-3" required />
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg rounded-3 shadow-sm">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Entrar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        @if (TempData["Error"] != null)
+        {
+            <text>mostrarAlertaError("Usuario o contraseña incorrectos");</text>
+        }
+    </script>
+}
